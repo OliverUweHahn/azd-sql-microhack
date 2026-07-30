@@ -1,0 +1,16 @@
+name: sql-modernization-microhack
+
+metadata:
+  template: sql-modernization-microhack@1.0.0
+
+infra:
+  provider: bicep
+  path: infra
+  module: main
+
+hooks:
+  preprovision:
+    shell: pwsh
+    run: ./scripts/configure.ps1
+    interactive: true
+    continueOnError: false
