@@ -16,9 +16,9 @@ param sqlMiAdminUsername string
 @secure()
 param sqlMiAdminPassword string
 
-@minValue(5)
+@minValue(3)
 @maxValue(20)
-param teamVmCount int = 5
+param teamVmCount int = 3
 
 param vnetAddressPrefix string = '10.0.0.0/16'
 param managedInstanceSubnetPrefix string = '10.0.1.0/24'
