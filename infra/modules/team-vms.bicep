@@ -108,10 +108,10 @@ resource installTeamTools 'Microsoft.Compute/virtualMachines/extensions@2024-11-
 
       settings: {
         fileUris: [
-          'https://raw.githubusercontent.com/.../Scripts/install-team-tools.ps1'
+          'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/install-team-tools.ps1'
         ]
       }
-      
+
       protectedSettings: {
         commandToExecute: installTeamToolsCommand
       }
