@@ -11,7 +11,7 @@ param adminPassword string
 
 param tags object
 
-var ConfigureSQLMachineCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-legacy.ps1" -TeamCount ${teamVmCount} -BackupBaseUri "https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/Databases"'
+var ConfigureSQLMachineCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-legacy.ps1" -TeamCount ${teamVmCount} -BackupBaseUri "https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/Databases" -SysAdminUsername ${adminUsername} -SysAdminPassword ${adminPassword}'
 
 resource networkInterface 'Microsoft.Network/networkInterfaces@2024-05-01' = {
   name: '${vmName}-nic'
