@@ -104,6 +104,37 @@ function Escape-SqlIdentifier
     return $Value.Replace("]", "]]")
 }
 
+function Get-BackupDownloadUri
+{
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [string] $BaseUri,
+
+        [Parameter(Mandatory = $true)]
+        [string] $FileName
+    )
+
+    # Handles normal URLs:
+    # https://server/backups + Database.bak
+    #
+    # Also handles URLs containing a query string:
+    # https://server/container?sv=... becomes
+    # https://server/container/Database.bak?sv=...
+
+    $questionMarkPosition = $BaseUri.IndexOf("?")
+
+    if ($questionMarkPosition -ge 0)
+    {
+        $uriPath  = $BaseUri.Substring(0, $questionMarkPosition).TrimEnd("/")
+        $uriQuery = $BaseUri.Substring($questionMarkPosition)
+
+        return "$uriPath/$FileName$uriQuery"
+    }
+
+    return "$($BaseUri.TrimEnd('/'))/$FileName"
+}
+
 function Invoke-DatabaseQuery
 {
     param
