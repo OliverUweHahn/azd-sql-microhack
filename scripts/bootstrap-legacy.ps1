@@ -22,7 +22,7 @@ $cred = New-Object PSCredential($username,$password)
 Start-Process `
 -FilePath "powershell.exe" `
 -Credential $cred `
--ArgumentList "-ExecutionPolicy Bypass -File & $PSScriptRoot\Restore-TeamDatabases.ps1 -TeamCount $TeamCount -BackupBaseUri $BackupBaseUri" `
+-ArgumentList "-ExecutionPolicy Bypass -File $((Get-Location).Path)\Restore-TeamDatabases.ps1 -TeamCount $TeamCount -BackupBaseUri $BackupBaseUri" `
 -Wait
 
 #& .\Restore-TeamDatabases.ps1 `

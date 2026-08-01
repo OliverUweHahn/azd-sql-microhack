@@ -21,7 +21,7 @@ $cred = New-Object PSCredential($username,$password)
 Start-Process `
 -FilePath "powershell.exe" `
 -Credential $cred `
--ArgumentList "-ExecutionPolicy Bypass -File & $PSScriptRoot\Restore-SampleDatabases.ps1 -BackupUri $BackupUri" `
+-ArgumentList "-ExecutionPolicy Bypass -File $((Get-Location).Path)\Restore-SampleDatabases.ps1 -BackupUri $BackupUri" `
 -Wait
 
 
