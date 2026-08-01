@@ -146,6 +146,7 @@ module teamVms 'modules/team-vms.bicep' = {
   }
 }
 
+/*
 module managedInstance 'modules/managed-instance.bicep' = {
   name: 'managed-instance'
   scope: resourceGroup
@@ -160,15 +161,16 @@ module managedInstance 'modules/managed-instance.bicep' = {
     tags: tags
   }
 }
+*/
 
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
 output AZURE_LOCATION string = location
 
 output AZURE_STORAGE_ACCOUNT_NAME string = storage.outputs.storageAccountName
 
-output SQL_MI_NAME string = managedInstance.outputs.managedInstanceName
+/* output SQL_MI_NAME string = managedInstance.outputs.managedInstanceName */
 
-output SQL_MI_FQDN string = managedInstance.outputs.fullyQualifiedDomainName
+/* output SQL_MI_FQDN string = managedInstance.outputs.fullyQualifiedDomainName */
 
 output LEGACY_SQL_VM_NAME string = legacySqlVm.outputs.vmName
 

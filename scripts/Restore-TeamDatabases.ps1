@@ -150,6 +150,7 @@ function Invoke-DatabaseQuery
         -ServerInstance $ServerInstance `
         -Database "master" `
         -Query $Query `
+        -TrustServerCertificate `
         -QueryTimeout $QueryTimeout `
         -AbortOnError `
         -ErrorAction Stop
@@ -586,7 +587,7 @@ foreach ($backupName in $backupNames)
     }
     else
     {
-        Write-Host "Downloading [$fileName]..."
+        Write-Host "Downloading [$fileName] from $downloadUri ..."
 
         $temporaryFile = "$destination.download"
 
