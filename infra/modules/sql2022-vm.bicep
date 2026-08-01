@@ -11,6 +11,7 @@ param adminPassword string
 param tags object
 
 var ConfigureSQLFirewallCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "Set-FW-ForAllInstances.ps1"'
+var RestoreSampleDatabasesCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "Restore-SampleDatabases.ps1" -BackupUri "https://github.com/Microsoft/sql-server-samples/releases/download/wide-world-importers-v1.0/WideWorldImporters-Full.bak"'
 
 resource networkInterface 'Microsoft.Network/networkInterfaces@2024-05-01' = {
   name: '${vmName}-nic'
@@ -82,7 +83,7 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2024-11-01' = {
   }
 }
 
-resource installTeamTools 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {
+resource ConfigureSQLFirewall 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {
   parent: virtualMachine
   name: 'ConfigureSQLFirewall'
   location: location
@@ -101,6 +102,29 @@ resource installTeamTools 'Microsoft.Compute/virtualMachines/extensions@2024-11-
 
     protectedSettings: {
       commandToExecute: ConfigureSQLFirewallCommand
+    }
+  }
+}
+
+resource RestoreSampleDatabases 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {
+  parent: virtualMachine
+  name: 'RestoreSampleDatabases'
+  location: location
+
+  properties: {
+    publisher: 'Microsoft.Compute'
+    type: 'CustomScriptExtension'
+    typeHandlerVersion: '1.10'
+    autoUpgradeMinorVersion: true
+
+    settings: {
+      fileUris: [
+        'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Restore-SampleDatabases.ps1'
+      ]
+    }
+
+    protectedSettings: {
+      commandToExecute: RestoreSampleDatabasesCommand
     }
   }
 }

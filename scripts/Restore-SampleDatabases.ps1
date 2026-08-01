@@ -1,15 +1,8 @@
 <#
 .SYNOPSIS
-Downloads four SQL Server backup files and restores one database set per team.
+Downloads SQL Server sample database WideWorldImports and restores it.
 
 .DESCRIPTION
-For each team, the script restores:
-
-    TEAMxx_LocalMasterDataDB
-    TEAMxx_SharedMasterDataDB
-    TEAMxx_TenantDataDB
-    TEAMxx_GlobalDataDB
-
 The physical database files are relocated to the SQL Server instance's
 default data and log directories. Every restored database receives unique
 physical file names, including backups containing multiple data or log files.
@@ -24,14 +17,12 @@ The script is designed for the local default SQL Server instance.
 - SQL Server service account must be able to read the download directory
 
 .EXAMPLE
-.\Restore-TeamDatabases.ps1 `
-    -TeamCount 4 `
-    -BackupBaseUri "https://raw.githubusercontent.com/organisation/repository/main/backups"
+.\Restore-SampleDatabases.ps1 `
+    -BackupUri "https://github.com/Microsoft/sql-server-samples/releases/download/wide-world-importers-v1.0/WideWorldImporters-Full.bak"
 
 .EXAMPLE
-.\Restore-TeamDatabases.ps1 `
-    -TeamCount 4 `
-    -BackupBaseUri "https://storageaccount.blob.core.windows.net/backups?<SAS-token>" `
+.\Restore-SampleDatabases.ps1 `
+    -BackupUri "https://github.com/Microsoft/sql-server-samples/releases/download/wide-world-importers-v1.0/WideWorldImporters-Full.bak" `
     -ReplaceExisting
 
 .NOTES
@@ -43,16 +34,12 @@ inserts the backup file name before the query string.
 param
 (
     [Parameter(Mandatory = $true)]
-    [ValidateRange(1, 999)]
-    [int] $TeamCount,
-
-    [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
-    [string] $BackupBaseUri,
+    [string] $BackupUri,
 
     [Parameter(Mandatory = $false)]
     [ValidateNotNullOrEmpty()]
-    [string] $DownloadDirectory = "C:\SQLBackups\TeamDatabases",
+    [string] $DownloadDirectory = "C:\SQLBackups",
 
     [Parameter(Mandatory = $false)]
     [ValidateNotNullOrEmpty()]
@@ -72,13 +59,6 @@ $ErrorActionPreference = "Stop"
 [Net.ServicePointManager]::SecurityProtocol =
     [Net.ServicePointManager]::SecurityProtocol -bor
     [Net.SecurityProtocolType]::Tls12
-
-$backupNames = @(
-    "LocalMasterDataDB",
-    "SharedMasterDataDB",
-    "TenantDataDB",
-    "GlobalDataDB"
-)
 
 function Escape-SqlString
 {
@@ -392,7 +372,7 @@ transaction log files (L).
     return $moveClauses
 }
 
-function Restore-TeamDatabase
+function Restore-SampleDatabase
 {
     param
     (
@@ -563,107 +543,89 @@ $defaultDirectories = Get-SqlDefaultDirectories
 Write-Host "Default data path: $($defaultDirectories.DataPath)"
 Write-Host "Default log path:  $($defaultDirectories.LogPath)"
 
-$downloadedBackups = @{}
+$resp = Invoke-WebRequest $BackupUri -Method Head -UseBasicParsing
+$filenamestring = @($resp.RawContent.Split() | Where-Object { $_ -match "filename=" })[0]
+$filename = $filenamestring.Split("=")[1]
 
-foreach ($backupName in $backupNames)
+$destination    = Join-Path $DownloadDirectory $fileName
+
+if ((Test-Path -LiteralPath $destination) -and
+    -not $ForceDownload.IsPresent)
 {
-    $fileName       = "$backupName.bak"
-    $destination    = Join-Path $DownloadDirectory $fileName
-    $downloadUri    = Get-BackupDownloadUri `
-        -BaseUri $BackupBaseUri `
-        -FileName $fileName
+    Write-Host "Using existing backup: $destination"
+}
+else
+{
+    Write-Host "Downloading $BackupUri ..."
 
-    if ((Test-Path -LiteralPath $destination) -and
-        -not $ForceDownload.IsPresent)
+    $temporaryFile = "$destination.download"
+
+    Remove-Item `
+        -LiteralPath $temporaryFile `
+        -Force `
+        -ErrorAction SilentlyContinue
+
+    try
     {
-        Write-Host "Using existing backup: $destination"
+        $invokeWebRequestParameters = @{
+            Uri         = $BackupUri
+            OutFile     = $temporaryFile
+            ErrorAction = "Stop"
+        }
+
+        # UseBasicParsing exists in Windows PowerShell 5.1 but not in
+        # newer editions in the same form.
+        if ($PSVersionTable.PSEdition -eq "Desktop")
+        {
+            $invokeWebRequestParameters.UseBasicParsing = $true
+        }
+
+        $lastProgressPreference = $ProgressPreference
+        $ProgressPreference = 'SilentlyContinue'
+        Invoke-WebRequest @invokeWebRequestParameters 
+        $ProgressPreference = $lastProgressPreference
+
+        if (-not (Test-Path -LiteralPath $temporaryFile))
+        {
+            throw "The downloaded file was not created."
+        }
+
+        if ((Get-Item -LiteralPath $temporaryFile).Length -eq 0)
+        {
+            throw "The downloaded file is empty."
+        }
+
+        Move-Item `
+            -LiteralPath $temporaryFile `
+            -Destination $destination `
+            -Force
     }
-    else
+    catch
     {
-        Write-Host "Downloading [$fileName] from $downloadUri ..."
-
-        $temporaryFile = "$destination.download"
-
         Remove-Item `
             -LiteralPath $temporaryFile `
             -Force `
             -ErrorAction SilentlyContinue
 
-        try
-        {
-            $invokeWebRequestParameters = @{
-                Uri         = $downloadUri
-                OutFile     = $temporaryFile
-                ErrorAction = "Stop"
-            }
-
-            # UseBasicParsing exists in Windows PowerShell 5.1 but not in
-            # newer editions in the same form.
-            if ($PSVersionTable.PSEdition -eq "Desktop")
-            {
-                $invokeWebRequestParameters.UseBasicParsing = $true
-            }
-
-            Invoke-WebRequest @invokeWebRequestParameters
-
-            if (-not (Test-Path -LiteralPath $temporaryFile))
-            {
-                throw "The downloaded file was not created."
-            }
-
-            if ((Get-Item -LiteralPath $temporaryFile).Length -eq 0)
-            {
-                throw "The downloaded file is empty."
-            }
-
-            Move-Item `
-                -LiteralPath $temporaryFile `
-                -Destination $destination `
-                -Force
-        }
-        catch
-        {
-            Remove-Item `
-                -LiteralPath $temporaryFile `
-                -Force `
-                -ErrorAction SilentlyContinue
-
-            throw "Download of [$fileName] failed: $($_.Exception.Message)"
-        }
-
-        Write-Host "Downloaded [$fileName] to [$destination]." `
-            -ForegroundColor Green
+        throw "Download of [$fileName] failed: $($_.Exception.Message)"
     }
 
-    $downloadedBackups[$backupName] = $destination
+    Write-Host "Downloaded [$fileName] to [$destination]." `
+        -ForegroundColor Green
 }
 
-$restoreCount = $TeamCount * $backupNames.Count
+$localBackupFile = $destination
+$BackupHeader = Invoke-DatabaseQuery -Query "RESTORE HEADERONLY FROM DISK = '$localBackupFile'"
+$localDatabaseName = $BackupHeader.DatabaseName
 
 Write-Host ""
-Write-Host (
-    "Starting {0} database restores for {1} team(s)." -f
-    $restoreCount,
-    $TeamCount
-) -ForegroundColor Cyan
+Write-Host "Starting database restore." -ForegroundColor Cyan
 
-for ($teamNumber = 1; $teamNumber -le $TeamCount; $teamNumber++)
-{
-    $teamPrefix = "TEAM{0:D2}" -f $teamNumber
-
-    foreach ($backupName in $backupNames)
-    {
-        $targetDatabaseName = "${teamPrefix}_${backupName}"
-
-        Restore-TeamDatabase `
-            -DatabaseName $targetDatabaseName `
-            -BackupFile $downloadedBackups[$backupName] `
-            -DefaultDataPath $defaultDirectories.DataPath `
-            -DefaultLogPath $defaultDirectories.LogPath
-    }
-}
+Restore-SampleDatabase `
+    -DatabaseName $localDatabaseName `
+    -BackupFile $localBackupFile `
+    -DefaultDataPath $defaultDirectories.DataPath `
+    -DefaultLogPath $defaultDirectories.LogPath
 
 Write-Host ""
-Write-Host (
-    "Completed. {0} team database set(s) were processed." -f $TeamCount
-) -ForegroundColor Green
+Write-Host "Completed." -ForegroundColor Green

@@ -111,6 +111,7 @@ module legacySqlVm 'modules/sql2016-vm.bicep' = {
     subnetId: network.outputs.managementSubnetId
     privateIPAddress: '10.0.2.5'
     vmSize: legacyVmSize
+    teamVmCount: teamVmCount
     adminUsername: adminUsername
     adminPassword: adminPassword
     tags: tags
