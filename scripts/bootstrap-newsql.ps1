@@ -1,5 +1,7 @@
 param(
-    [string]$BackupUri
+    [string]$BackupUri,
+    [string]$SysAdminUsername,
+    [string]$SysAdminPassword    
 )
 
 $ErrorActionPreference = 'Stop'
@@ -12,7 +14,18 @@ Write-Host "Configuring SQL Firewall..."
 Start-Sleep -Seconds 120
 
 Write-Host "Restoring Sample Database..."
-& .\Restore-SampleDatabases.ps1 `
-    -BackupUri $BackupUri
+
+$username = $SysAdminUsername
+$password = ConvertTo-SecureString $SysAdminPassword -AsPlainText -Force
+$cred = New-Object PSCredential($username,$password)
+Start-Process `
+-FilePath "powershell.exe" `
+-Credential $cred `
+-ArgumentList "-ExecutionPolicy Bypass -File & $PSScriptRoot\Restore-SampleDatabases.ps1 -BackupUri $BackupUri" `
+-Wait
+
+
+#& .\Restore-SampleDatabases.ps1 `
+#    -BackupUri $BackupUri
 
 Write-Host "Bootstrap completed."

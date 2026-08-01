@@ -1,6 +1,8 @@
 param(
     [int]$TeamCount = 1,
-    [string]$BackupBaseUri
+    [string]$BackupBaseUri,
+    [string]$SysAdminUsername,
+    [string]$SysAdminPassword
 )
 
 $ErrorActionPreference = 'Stop'
@@ -13,8 +15,18 @@ Write-Host "Configuring SQL Firewall..."
 Start-Sleep -Seconds 120
 
 Write-Host "Restoring Team Databases..."
-& .\Restore-TeamDatabases.ps1 `
-    -TeamCount $TeamCount `
-    -BackupBaseUri $BackupBaseUri
+
+$username = $SysAdminUsername
+$password = ConvertTo-SecureString $SysAdminPassword -AsPlainText -Force
+$cred = New-Object PSCredential($username,$password)
+Start-Process `
+-FilePath "powershell.exe" `
+-Credential $cred `
+-ArgumentList "-ExecutionPolicy Bypass -File & $PSScriptRoot\Restore-TeamDatabases.ps1 -TeamCount $TeamCount -BackupBaseUri $BackupBaseUri" `
+-Wait
+
+#& .\Restore-TeamDatabases.ps1 `
+#    -TeamCount $TeamCount `
+#    -BackupBaseUri $BackupBaseUri
 
 Write-Host "Bootstrap completed."
