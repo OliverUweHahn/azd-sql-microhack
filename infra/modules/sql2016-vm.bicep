@@ -11,9 +11,7 @@ param adminPassword string
 
 param tags object
 
-var ConfigureSQLFirewallCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "Set-FW-ForAllInstances.ps1"'
-var RestoreTeamDatabasesCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "Restore-TeamDatabases.ps1" -TeamCount ${teamVmCount} -BackupBaseUri "https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/Databases"'
-
+var ConfigureSQLMachineCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-legacy.ps1" -TeamCount ${teamVmCount} -BackupBaseUri "https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/Databases"'
 
 resource networkInterface 'Microsoft.Network/networkInterfaces@2024-05-01' = {
   name: '${vmName}-nic'
@@ -85,9 +83,9 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2024-11-01' = {
   }
 }
 
-resource installTeamTools 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {
+resource ConfigureSQLMachine 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {
   parent: virtualMachine
-  name: 'ConfigureSQLFirewall'
+  name: 'ConfigureSQLMachine'
   location: location
 
   properties: {
@@ -99,34 +97,13 @@ resource installTeamTools 'Microsoft.Compute/virtualMachines/extensions@2024-11-
     settings: {
       fileUris: [
         'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Set-FW-ForAllInstances.ps1'
-      ]
-    }
-
-    protectedSettings: {
-      commandToExecute: ConfigureSQLFirewallCommand
-    }
-  }
-}
-
-resource RestoreTeamDatabases 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {
-  parent: virtualMachine
-  name: 'RestoreTeamDatabases'
-  location: location
-
-  properties: {
-    publisher: 'Microsoft.Compute'
-    type: 'CustomScriptExtension'
-    typeHandlerVersion: '1.10'
-    autoUpgradeMinorVersion: true
-
-    settings: {
-      fileUris: [
         'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Restore-TeamDatabases.ps1'
+        'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/bootstrap-legacy.ps1'
       ]
     }
 
     protectedSettings: {
-      commandToExecute: RestoreTeamDatabasesCommand
+      commandToExecute: ConfigureSQLMachineCommand
     }
   }
 }
