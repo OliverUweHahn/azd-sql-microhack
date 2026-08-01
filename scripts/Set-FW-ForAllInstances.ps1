@@ -36,14 +36,12 @@ foreach ($Instance in $Instances) {
     if ($FWRule) {
         Write-Host $FirewallRuleName -ForegroundColor Yellow
         Write-Host $FirewallBinary -ForegroundColor Yellow
-        Set-NetFirewallRule -NewDisplayName $FirewallRuleName -Program $FirewallBinary -Action Allow -Profile Domain -DisplayName $FirewallRuleName -Description $FirewallRuleName -Direction Inbound | Out-Null
+        Set-NetFirewallRule -NewDisplayName $FirewallRuleName -Program $FirewallBinary -Action Allow -Profile Domain,Private,Public -DisplayName $FirewallRuleName -Description $FirewallRuleName -Direction Inbound | Out-Null
     }
     else {
         Write-Host $FirewallRuleName -ForegroundColor Green
         Write-Host $FirewallBinary -ForegroundColor Green
-        #New-NetFirewallRule -Program "C:\Program Files (x86)\Microsoft SQL Server\90\Shared\sqlbrowser.exe" -Action Allow -Profile Domain, Private -DisplayName "SQL Server Browser" -Description "Allow SQL Server Browser" -Direction Inbound
-        #New-NetFirewallRule -Program "C:\Program Files\Microsoft SQL Server\MSSQL15.INST1\MSSQL\Binn\sqlservr.exe" -Action Allow -Profile Domain, Private -DisplayName "SQL Server (INST1)" -Description "Allow SQL Server (INST1)" -Direction Inbound
-        New-NetFirewallRule -Program $FirewallBinary -Action Allow -Profile Domain -DisplayName $FirewallRuleName -Description $FirewallRuleName -Direction Inbound | Out-Null
+        New-NetFirewallRule -Program $FirewallBinary -Action Allow -Profile Domain,Private,Public -DisplayName $FirewallRuleName -Description $FirewallRuleName -Direction Inbound | Out-Null
     }
 }
 

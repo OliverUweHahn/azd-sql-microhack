@@ -37,3 +37,25 @@ az provider register --namespace Microsoft.Compute
 az provider register --namespace Microsoft.Network
 az provider register --namespace Microsoft.Sql
 az provider register --namespace Microsoft.Storage
+```
+
+
+## Provisioning Steps
+
+```powershell
+azd auth login --tenant-id "MngEnvMCAPxxxxxx.onmicrosoft.com"
+
+azd init -e sqlhack
+
+azd env set AZURE_SUBSCRIPTION_ID "xxxxxxxx-yyyy-zzzz-yyyy-xxxxxxxxxxxx"
+
+azd env set AZURE_LOCATION swedencentral
+
+azd provision
+```
+
+## Cleaning Up
+
+```powershell
+azd down --purge
+```

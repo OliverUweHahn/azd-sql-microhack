@@ -27,6 +27,7 @@ param teamSubnetPrefix string = '10.0.3.0/24'
 param bastionSubnetPrefix string = '10.0.4.0/24'
 
 param legacyVmSize string = 'Standard_D4s_v5'
+param sqlarcVmSize string = 'Standard_D2s_v5'
 param teamVmSize string = 'Standard_D2s_v5'
 
 param managedInstanceVCores int = 8
@@ -110,6 +111,21 @@ module legacySqlVm 'modules/sql2016-vm.bicep' = {
     subnetId: network.outputs.managementSubnetId
     privateIPAddress: '10.0.2.5'
     vmSize: legacyVmSize
+    adminUsername: adminUsername
+    adminPassword: adminPassword
+    tags: tags
+  }
+}
+
+module sqlarcSqlVm 'modules/sql2022-vm.bicep' = {
+  name: 'sqlarc-sql-vm'
+  scope: resourceGroup
+  params: {
+    location: location
+    vmName: 'arcSQL2022'
+    subnetId: network.outputs.managementSubnetId
+    privateIPAddress: '10.0.2.6'
+    vmSize: sqlarcVmSize
     adminUsername: adminUsername
     adminPassword: adminPassword
     tags: tags
