@@ -174,10 +174,8 @@ function Invoke-DatabaseQuery
     else
     {
         $connectionString = "Data Source=$ServerInstance;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;"
+        $Connection = New-Object System.Data.SqlClient.SqlConnection($connectionString)
     }
-
-    #$ConnectionString      = "Data Source=$ServerInstance;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;"
-    $Connection = New-Object System.Data.SqlClient.SqlConnection($connectionString)
     $Connection.open()
 
     $command = New-Object system.Data.SqlClient.SqlCommand($Connection)
