@@ -83,10 +83,35 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2024-11-01' = {
   }
 }
 
+resource sqlVirtualMachine 'Microsoft.SqlVirtualMachine/sqlVirtualMachines@2023-10-01' = {
+  name: vmName
+  location: location
+
+  properties: {
+    virtualMachineResourceId: virtualMachine.id
+
+    sqlManagement: 'Full'
+
+    serverConfigurationsManagementSettings: {
+      sqlConnectivityUpdateSettings: {
+        connectivityType: 'PRIVATE'
+        port: 1433
+
+        sqlAuthUpdateUserName: adminUsername
+        sqlAuthUpdatePassword: adminPassword
+      }
+    }
+  }
+}
+
 resource ConfigureSQLMachine 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {
   parent: virtualMachine
   name: 'ConfigureSQLMachine'
   location: location
+
+  dependsOn: [
+    sqlVirtualMachine
+  ]  
 
   properties: {
     publisher: 'Microsoft.Compute'

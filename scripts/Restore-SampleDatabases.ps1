@@ -46,6 +46,12 @@ param
     [string] $ServerInstance = "localhost",
 
     [Parameter(Mandatory = $false)]
+    [string] $sqlusername,
+
+    [Parameter(Mandatory = $false)]
+    [string] $sqlpassword,
+    
+    [Parameter(Mandatory = $false)]
     [switch] $ReplaceExisting,
 
     [Parameter(Mandatory = $false)]
@@ -104,8 +110,20 @@ function Invoke-DatabaseQuery
     #     -AbortOnError `
     #     -ErrorAction Stop
 
-    $ConnectionString      = "Data Source=$ServerInstance;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;"
-    $Connection = New-Object System.Data.SqlClient.SqlConnection($connectionString)
+    if (-not [string]::IsNullOrWhiteSpace($sqlusername) -and
+        -not [string]::IsNullOrWhiteSpace($sqlpassword))
+    {
+        $connectionString = "Data Source=$ServerInstance;Initial Catalog=master;TrustServerCertificate=True;"
+		$Connection = New-Object System.Data.SqlClient.SqlConnection($connectionString)
+		[System.Security.SecureString]$SQLPwd = $sqlpassword #| ConvertTo-SecureString
+		$SQLPwd.MakeReadOnly()
+		$cred = New-Object System.Data.SqlClient.SqlCredential($sqlusername,$SQLPwd)
+		$Connection.credential = $cred
+    }
+    else
+    {
+        $connectionString = "Data Source=$ServerInstance;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;"
+    }
     $Connection.open()
 
     $command = New-Object system.Data.SqlClient.SqlCommand($Connection)
