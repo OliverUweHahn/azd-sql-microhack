@@ -166,7 +166,7 @@ function Invoke-DatabaseQuery
     {
         $connectionString = "Data Source=$ServerInstance;Initial Catalog=master;TrustServerCertificate=True;"
 		$Connection = New-Object System.Data.SqlClient.SqlConnection($connectionString)
-		[System.Security.SecureString]$SQLPwd = $sqlpassword #| ConvertTo-SecureString
+		[System.Security.SecureString]$SQLPwd = $sqlpassword | ConvertTo-SecureString -AsPlainText -Force
 		$SQLPwd.MakeReadOnly()
 		$cred = New-Object System.Data.SqlClient.SqlCredential($sqlusername,$SQLPwd)
 		$Connection.credential = $cred
