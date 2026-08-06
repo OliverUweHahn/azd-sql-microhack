@@ -81,7 +81,7 @@ $Connection.Close()
 
 foreach ($BackupFile in $BackupFiles)
 {
-    $[$tabaseName = [System.IO.Path\]::GetFileNameWithoutExtension($BackupFile)
+    $DatabaseName = [System.IO.Path]::GetFileNameWithoutExtension($BackupFile)
 
     $GithubUrl =
         "$BackupBaseUri/$BackupFile"
