@@ -131,6 +131,7 @@ resource ConfigureSQLMachine 'Microsoft.Compute/virtualMachines/extensions@2024-
         'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Restore-TeamDatabases.ps1'
         'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/bootstrap-legacy.ps1'
         'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Restore-TeamDatabasesMI.ps1'
+        'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Install-AzureCLI.ps1'
       ]
     }
 

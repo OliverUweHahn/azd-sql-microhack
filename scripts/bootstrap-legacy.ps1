@@ -16,6 +16,8 @@ Write-Host "Restoring Team Databases..."
 
 & .\Restore-TeamDatabases.ps1 -TeamCount $TeamCount -BackupBaseUri $BackupBaseUri -sqlusername $SysAdminUsername -sqlpassword $SysAdminPassword
 
+& .\Install-AzureCLI.ps1
+
 & .\Restore-TeamDatabasesMI.ps1 -BackupBaseUri $BackupBaseUri -sqlusername $SysAdminUsername -sqlpassword $SysAdminPassword -StorageAccountName $StorageAccountName -ManagedInstanceServer $ManagedInstanceServer
 
 Write-Host "Bootstrap completed."
