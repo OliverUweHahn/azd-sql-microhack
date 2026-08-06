@@ -20,6 +20,27 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+Write-Host 'Checking Storage RBAC propagation...'
+
+for($i=1; $i -le 30; $i++)
+{
+    try
+    {
+        az storage blob list `
+            --account-name $StorageAccountName `
+            --container-name $ContainerName `
+            --auth-mode login `
+            --output none
+
+        Write-Host "RBAC active."
+        break
+    }
+    catch
+    {
+        Start-Sleep -Seconds 20
+    }
+}
+
 Write-Host 'Authenticating with VM Managed Identity...'
 
 az login --identity --allow-no-subscriptions | Out-Null
