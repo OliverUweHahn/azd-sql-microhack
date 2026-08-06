@@ -22,7 +22,7 @@ $ErrorActionPreference = 'Stop'
 
 Write-Host 'Authenticating with VM Managed Identity...'
 
-az login --identity | Out-Null
+az login --identity --allow-no-subscriptions | Out-Null
 
 $BackupFiles = @(
     "LocalMasterDataDB.bak"
