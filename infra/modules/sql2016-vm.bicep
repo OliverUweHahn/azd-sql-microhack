@@ -5,13 +5,15 @@ param privateIPAddress string
 param vmSize string
 param adminUsername string
 param teamVmCount int
+param storageAccountName string
+param managedInstanceServer string
 
 @secure()
 param adminPassword string
 
 param tags object
 
-var ConfigureSQLMachineCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-legacy.ps1" -TeamCount ${teamVmCount} -BackupBaseUri "https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/Databases" -SysAdminUsername ${adminUsername} -SysAdminPassword ${adminPassword}'
+var ConfigureSQLMachineCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-legacy.ps1" -TeamCount ${teamVmCount} -BackupBaseUri "https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/Databases" -SysAdminUsername ${adminUsername} -SysAdminPassword ${adminPassword} -StorageAccountName ${storageAccountName} -ManagedInstanceServer ${managedInstanceServer}'
 
 resource networkInterface 'Microsoft.Network/networkInterfaces@2024-05-01' = {
   name: '${vmName}-nic'
@@ -39,6 +41,10 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2024-11-01' = {
   name: vmName
   location: location
   tags: tags
+
+  identity: {
+    type: 'SystemAssigned'
+  }
 
   properties: {
     hardwareProfile: {
@@ -124,6 +130,7 @@ resource ConfigureSQLMachine 'Microsoft.Compute/virtualMachines/extensions@2024-
         'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Set-FW-ForAllInstances.ps1'
         'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Restore-TeamDatabases.ps1'
         'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/bootstrap-legacy.ps1'
+        'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Restore-TeamDatabasesMI.ps1'
       ]
     }
 
@@ -135,3 +142,4 @@ resource ConfigureSQLMachine 'Microsoft.Compute/virtualMachines/extensions@2024-
 
 output vmName string = virtualMachine.name
 output privateIPAddress string = privateIPAddress
+output vmPrincipalId string = virtualMachine.identity.principalId

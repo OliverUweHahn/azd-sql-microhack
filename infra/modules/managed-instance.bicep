@@ -63,3 +63,5 @@ resource managedInstance 'Microsoft.Sql/managedInstances@2025-02-01-preview' = {
 output managedInstanceName string = managedInstance.name
 
 output fullyQualifiedDomainName string = managedInstance.properties.fullyQualifiedDomainName
+
+output sqlmiPrincipalId string = managedInstance.identity.principalId

@@ -81,16 +81,6 @@ module network 'modules/network.bicep' = {
   }
 }
 
-module storage 'modules/storage.bicep' = {
-  name: 'storage'
-  scope: resourceGroup
-  params: {
-    location: location
-    storageAccountName: storageAccountName
-    tags: tags
-  }
-}
-
 module bastion 'modules/bastion.bicep' = {
   name: 'bastion'
   scope: resourceGroup
@@ -114,6 +104,8 @@ module legacySqlVm 'modules/sql2016-vm.bicep' = {
     teamVmCount: teamVmCount
     adminUsername: adminUsername
     adminPassword: adminPassword
+    storageAccountName: storageAccountName
+    managedInstanceServer: managedInstance.outputs.fullyQualifiedDomainName
     tags: tags
   }
 }
@@ -158,6 +150,18 @@ module managedInstance 'modules/managed-instance.bicep' = {
     administratorLoginPassword: sqlMiAdminPassword
     vCores: managedInstanceVCores
     storageSizeInGB: managedInstanceStorageGB
+    tags: tags
+  }
+}
+
+module storage 'modules/storage.bicep' = {
+  name: 'storage'
+  scope: resourceGroup
+  params: {
+    location: location
+    storageAccountName: storageAccountName
+    vmPrincipalId: legacySqlVm.outputs.vmPrincipalId
+    sqlmiPrincipalId: managedInstance.outputs.sqlmiPrincipalId
     tags: tags
   }
 }

@@ -1,6 +1,8 @@
 param(
     [int]$TeamCount = 1,
     [string]$BackupBaseUri,
+    [string]$StorageAccountName,
+    [string]$ManagedInstanceServer,    
     [string]$SysAdminUsername,
     [string]$SysAdminPassword
 )
@@ -13,5 +15,7 @@ Write-Host "Configuring SQL Firewall..."
 Write-Host "Restoring Team Databases..."
 
 & .\Restore-TeamDatabases.ps1 -TeamCount $TeamCount -BackupBaseUri $BackupBaseUri -sqlusername $SysAdminUsername -sqlpassword $SysAdminPassword
+
+& .\Restore-TeamDatabasesMI.ps1 -BackupBaseUri $BackupBaseUri -sqlusername $SysAdminUsername -sqlpassword $SysAdminPassword -StorageAccountName $StorageAccountName -ManagedInstanceServer $ManagedInstanceServer
 
 Write-Host "Bootstrap completed."
