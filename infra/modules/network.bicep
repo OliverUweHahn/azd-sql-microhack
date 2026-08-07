@@ -5,6 +5,7 @@ param managedInstanceSubnetPrefix string
 param managementSubnetPrefix string
 param teamSubnetPrefix string
 param bastionSubnetPrefix string
+param PrivateEndpointsSubnetPrefix string
 param tags object
 
 resource managedInstanceNsg 'Microsoft.Network/networkSecurityGroups@2024-05-01' = {
@@ -179,6 +180,12 @@ resource vnet 'Microsoft.Network/virtualNetworks@2024-05-01' = {
           addressPrefix: bastionSubnetPrefix
         }
       }
+      {
+        name: 'PrivateEndpointsSubnet'
+        properties: {
+          addressPrefix: PrivateEndpointsSubnetPrefix
+        }
+      }
     ]
   }
 }
@@ -207,4 +214,10 @@ output bastionSubnetId string = resourceId(
   'Microsoft.Network/virtualNetworks/subnets',
   vnet.name,
   'AzureBastionSubnet'
+)
+
+output PrivateEndpointsSubnetId string = resourceId(
+  'Microsoft.Network/virtualNetworks/subnets',
+  vnet.name,
+  'PrivateEndpointsSubnet'
 )

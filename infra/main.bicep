@@ -25,6 +25,7 @@ param managedInstanceSubnetPrefix string = '10.0.1.0/24'
 param managementSubnetPrefix string = '10.0.2.0/24'
 param teamSubnetPrefix string = '10.0.3.0/24'
 param bastionSubnetPrefix string = '10.0.4.0/24'
+param PrivateEndpointsSubnetPrefix string = '10.0.5.0/24'
 
 param legacyVmSize string = 'Standard_D4s_v5'
 param sqlarcVmSize string = 'Standard_D2s_v5'
@@ -77,6 +78,7 @@ module network 'modules/network.bicep' = {
     managementSubnetPrefix: managementSubnetPrefix
     teamSubnetPrefix: teamSubnetPrefix
     bastionSubnetPrefix: bastionSubnetPrefix
+    PrivateEndpointsSubnetPrefix: PrivateEndpointsSubnetPrefix
     tags: tags
   }
 }
@@ -101,11 +103,8 @@ module legacySqlVm 'modules/sql2016-vm.bicep' = {
     subnetId: network.outputs.managementSubnetId
     privateIPAddress: '10.0.2.5'
     vmSize: legacyVmSize
-    teamVmCount: teamVmCount
     adminUsername: adminUsername
     adminPassword: adminPassword
-    storageAccountName: storageAccountName
-    managedInstanceServer: managedInstance.outputs.fullyQualifiedDomainName
     tags: tags
   }
 }
@@ -160,9 +159,59 @@ module storage 'modules/storage.bicep' = {
   params: {
     location: location
     storageAccountName: storageAccountName
+    privateEndpointName: '${storageAccountName}-pe'
+    subnetId: network.outputs.PrivateEndpointsSubnetId
+    vnetId: network.outputs.vnetId
+    tags: tags
+  }
+}
+
+module storage_rbac 'modules/storage-rbac.bicep' = {
+  name: 'storage_rbac'
+  dependsOn: [
+    storage
+    legacySqlVm
+    managedInstance
+  ]
+  scope: resourceGroup
+  params: {
+    storageAccountName: storage.outputs.storageAccountName
     vmPrincipalId: legacySqlVm.outputs.vmPrincipalId
     sqlmiPrincipalId: managedInstance.outputs.sqlmiPrincipalId
-    tags: tags
+  }
+}
+
+module legacySqlVm_cse 'modules/sql2016-vm-cse.bicep' = {
+  name: 'legacy-sql-vm_cse'
+  scope: resourceGroup
+  params: {
+    location: location
+    vmName: 'LegacySQL2016'
+    teamVmCount: teamVmCount
+    adminUsername: adminUsername
+    adminPassword: adminPassword
+    storageAccountName: storageAccountName
+    managedInstanceServer: managedInstance.outputs.fullyQualifiedDomainName
+  }
+}
+
+module sqlarcSqlVm_cse 'modules/sql2022-vm-cse.bicep' = {
+  name: 'sqlarc-sql-vm_cse'
+  scope: resourceGroup
+  params: {
+    location: location
+    vmName: 'arcSQL2022'
+    adminUsername: adminUsername
+    adminPassword: adminPassword
+  }
+}
+
+module teamVms_cse 'modules/team-vms-cse.bicep' = {
+  name: 'team-vms_cse'
+  scope: resourceGroup
+  params: {
+    location: location
+    teamVmCount: teamVmCount
   }
 }
 

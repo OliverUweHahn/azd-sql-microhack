@@ -4,16 +4,11 @@ param subnetId string
 param privateIPAddress string
 param vmSize string
 param adminUsername string
-param teamVmCount int
-param storageAccountName string
-param managedInstanceServer string
 
 @secure()
 param adminPassword string
 
 param tags object
-
-var ConfigureSQLMachineCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-legacy.ps1" -TeamCount ${teamVmCount} -BackupBaseUri "https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/Databases" -SysAdminUsername ${adminUsername} -SysAdminPassword ${adminPassword} -StorageAccountName ${storageAccountName} -ManagedInstanceServer ${managedInstanceServer}'
 
 resource networkInterface 'Microsoft.Network/networkInterfaces@2024-05-01' = {
   name: '${vmName}-nic'
@@ -106,37 +101,6 @@ resource sqlVirtualMachine 'Microsoft.SqlVirtualMachine/sqlVirtualMachines@2023-
         sqlAuthUpdateUserName: adminUsername
         sqlAuthUpdatePassword: adminPassword
       }
-    }
-  }
-}
-
-resource ConfigureSQLMachine 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {
-  parent: virtualMachine
-  name: 'ConfigureSQLMachine'
-  location: location
-
-  dependsOn: [
-    sqlVirtualMachine
-  ]  
-
-  properties: {
-    publisher: 'Microsoft.Compute'
-    type: 'CustomScriptExtension'
-    typeHandlerVersion: '1.10'
-    autoUpgradeMinorVersion: true
-
-    settings: {
-      fileUris: [
-        'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Set-FW-ForAllInstances.ps1'
-        'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Restore-TeamDatabases.ps1'
-        'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/bootstrap-legacy.ps1'
-        'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Restore-TeamDatabasesMI.ps1'
-        'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Install-AzureCLI.ps1'
-      ]
-    }
-
-    protectedSettings: {
-      commandToExecute: ConfigureSQLMachineCommand
     }
   }
 }
