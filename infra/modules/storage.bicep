@@ -33,6 +33,14 @@ resource backupContainer 'Microsoft.Storage/storageAccounts/blobServices/contain
   }
 }
 
+resource auditContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2025-01-01' = {
+  name: '${storageAccount.name}/default/auditlogs'
+
+  properties: {
+    publicAccess: 'None'
+  }
+}
+
 resource storagePrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' = {
   name: privateEndpointName
   location: location

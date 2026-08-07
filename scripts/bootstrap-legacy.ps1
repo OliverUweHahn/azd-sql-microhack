@@ -20,4 +20,6 @@ Write-Host "Restoring Team Databases..."
 
 & .\Restore-TeamDatabasesMI.ps1 -BackupBaseUri $BackupBaseUri -sqlusername $SysAdminUsername -sqlpassword $SysAdminPassword -StorageAccountName $StorageAccountName -ManagedInstanceServer $ManagedInstanceServer
 
+& .\Configure-SQLMI.ps1 -ManagedInstanceServer $ManagedInstanceServer -sqlusername $SysAdminUsername -sqlpassword $SysAdminPassword
+
 Write-Host "Bootstrap completed."

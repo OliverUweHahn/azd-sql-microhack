@@ -50,6 +50,7 @@ $BackupFiles = @(
     "SharedMasterDataDB.bak"
     "TenantDataDB.bak"
     "GlobalDataDB.bak"
+    "TenantCRM.bak"
 )
 
 $CredentialUrl = "https://$StorageAccountName.blob.core.windows.net/$ContainerName"

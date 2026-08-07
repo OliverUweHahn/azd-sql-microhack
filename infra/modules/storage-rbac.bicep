@@ -32,7 +32,7 @@ resource vmBlobContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-
   }
 }
 
-resource sqlmiBlobDataReaderRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+/* resource sqlmiBlobDataReaderRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(
     storageAccount.id,
     sqlmiPrincipalId,
@@ -43,6 +43,23 @@ resource sqlmiBlobDataReaderRole 'Microsoft.Authorization/roleAssignments@2022-0
 
   properties: {
     roleDefinitionId: storageBlobDataReaderRoleId
+    principalId: sqlmiPrincipalId
+    principalType: 'ServicePrincipal'
+  }
+}
+ */
+
+resource sqlmiBlobContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(
+    storageAccount.id,
+    sqlmiPrincipalId,
+    storageBlobDataContributorRoleId
+  )
+
+  scope: storageAccount
+
+  properties: {
+    roleDefinitionId: storageBlobDataContributorRoleId
     principalId: sqlmiPrincipalId
     principalType: 'ServicePrincipal'
   }
