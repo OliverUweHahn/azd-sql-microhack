@@ -1,7 +1,7 @@
 param location string
 param teamVmCount int
 
-var ConfigureTeamVMCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-teamvm.ps1"'
+var ConfigureTeamVMCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-teamvm.ps1" -SamplesBaseUri "https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/TSQL_Scripts"'
 
 resource virtualMachines 'Microsoft.Compute/virtualMachines@2024-11-01' existing = [
   for index in range(0, teamVmCount): {

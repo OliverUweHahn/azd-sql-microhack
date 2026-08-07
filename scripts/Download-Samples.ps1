@@ -37,7 +37,7 @@ foreach ($item in $items) {
     if ($item.type -eq "file") {
         $destination = Join-Path $DownloadDirectory $item.name
         Write-Host "Downloading $($item.path)"
-        if (Test-Path $destination -and -not $ForceDownload.IsPresent) {
+        if ((Test-Path $destination) -and (-not $ForceDownload.IsPresent)) {
             Write-Host "File $($item.name) already exists. Skipping download."
         } else {
             Remove-Item -LiteralPath $destination -ErrorAction SilentlyContinue -Force
