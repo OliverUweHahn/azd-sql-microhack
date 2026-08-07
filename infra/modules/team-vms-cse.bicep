@@ -1,7 +1,7 @@
 param location string
 param teamVmCount int
 
-var installTeamToolsCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "install-team-tools.ps1"'
+var ConfigureTeamVMCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-teamv.ps1"'
 
 resource virtualMachines 'Microsoft.Compute/virtualMachines@2024-11-01' existing = [
   for index in range(0, teamVmCount): {
@@ -24,11 +24,12 @@ resource installTeamTools 'Microsoft.Compute/virtualMachines/extensions@2024-11-
       settings: {
         fileUris: [
           'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/install-team-tools.ps1'
+          'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Download-Samples.ps1'
         ]
       }
 
       protectedSettings: {
-        commandToExecute: installTeamToolsCommand
+        commandToExecute: ConfigureTeamVMCommand
       }
     }
   }
