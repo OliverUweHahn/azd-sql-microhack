@@ -654,7 +654,10 @@ foreach ($backupName in $backupNames)
                 $invokeWebRequestParameters.UseBasicParsing = $true
             }
 
+            $lastProgressPreference = $ProgressPreference
+            $ProgressPreference = 'SilentlyContinue'
             Invoke-WebRequest @invokeWebRequestParameters
+            $ProgressPreference = $lastProgressPreference
 
             if (-not (Test-Path -LiteralPath $temporaryFile))
             {

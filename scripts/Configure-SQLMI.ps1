@@ -458,6 +458,8 @@ GO
 
 "@
 
+[System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.ConnectionInfo") | Out-Null
+[System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.Smo") | Out-Null
 
 $connectionString = "Data Source=$ManagedInstanceServer;Initial Catalog=master;TrustServerCertificate=True;"
 $Connection = New-Object System.Data.SqlClient.SqlConnection($connectionString)
@@ -465,16 +467,37 @@ $Connection = New-Object System.Data.SqlClient.SqlConnection($connectionString)
 $SQLPwd.MakeReadOnly()
 $cred = New-Object System.Data.SqlClient.SqlCredential($sqlusername,$SQLPwd)
 $Connection.credential = $cred
-$Connection.open()
+#$Connection.open()
 
-$command = New-Object system.Data.SqlClient.SqlCommand($Connection)
-$command.Connection = $Connection
-$command.CommandTimeout = $QueryTimeout
+#$command = New-Object system.Data.SqlClient.SqlCommand($Connection)
+#$command.Connection = $Connection
+#$command.CommandTimeout = $QueryTimeout
 
-$command.CommandText = $ConfigureSql
+#$command.CommandText = $ConfigureSql
+#$result = $command.ExecuteReader()
+#$table = New-Object System.Data.DataTable
+#$table.Load($result)
 
-$result = $command.ExecuteReader()
-$table = New-Object System.Data.DataTable
-$table.Load($result)
+# 5. SMO-Serververbindung initialisieren
+$serverConnection = New-Object Microsoft.SqlServer.Management.Common.ServerConnection($Connection)
+$server = New-Object Microsoft.SqlServer.Management.Smo.Server($serverConnection)
 
-$Connection.Close()
+try {
+    # Ausführung des Skripts inkl. GO-Trenner
+    [void]$server.ConnectionContext.ExecuteNonQuery($ConfigureSql)
+    #Write-Host "Skript erfolgreich auf SQL MI ausgeführt." -ForegroundColor Green
+}
+catch {
+    Write-Error "Fehler bei der Ausführung: $_"
+}
+finally {
+    if ($null -ne $serverConnection -and $serverConnection.IsOpen) {
+        $serverConnection.Disconnect()
+    }
+}
+try {
+	$Connection.Close()
+}
+catch {
+}
+
