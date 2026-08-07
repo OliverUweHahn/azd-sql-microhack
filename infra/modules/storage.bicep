@@ -59,10 +59,12 @@ resource storagePrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' 
 
 resource blobDnsZone 'Microsoft.Network/privateDnsZones@2024-06-01' = {
   name: 'privatelink.blob.core.windows.net'
+  location: 'global'
 }
 
 resource dnsZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = {
   name: '${blobDnsZone.name}/vnet-link'
+  location: 'global'
 
   properties: {
     registrationEnabled: false
@@ -75,7 +77,7 @@ resource dnsZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024
 
 resource storagePrivateDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2024-05-01' = {
   name: '${storagePrivateEndpoint.name}/default'
-
+ 
   properties: {
     privateDnsZoneConfigs: [
       {

@@ -198,6 +198,9 @@ module legacySqlVm_cse 'modules/sql2016-vm-cse.bicep' = {
 module sqlarcSqlVm_cse 'modules/sql2022-vm-cse.bicep' = {
   name: 'sqlarc-sql-vm_cse'
   scope: resourceGroup
+  dependsOn: [
+    sqlarcSqlVm
+  ]
   params: {
     location: location
     vmName: 'arcSQL2022'
@@ -209,6 +212,9 @@ module sqlarcSqlVm_cse 'modules/sql2022-vm-cse.bicep' = {
 module teamVms_cse 'modules/team-vms-cse.bicep' = {
   name: 'team-vms_cse'
   scope: resourceGroup
+  dependsOn: [
+    teamVms
+  ]
   params: {
     location: location
     teamVmCount: teamVmCount
