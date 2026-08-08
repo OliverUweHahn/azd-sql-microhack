@@ -84,6 +84,25 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2024-11-01' = {
   }
 }
 
+resource autoShutdownConfig 'Microsoft.DevTestLab/schedules@2018-09-15' = {
+  name: 'shutdown-computevm-${vmName}'
+  location: location
+  properties: {
+    status: 'Enabled'
+    notificationSettings: {
+      status: 'Disabled'
+      timeInMinutes: 15
+      notificationLocale: 'en'
+    }
+    dailyRecurrence: {
+       time: '1800'
+    }
+     timeZoneId: 'UTC'
+     taskType: 'ComputeVmShutdownTask'
+     targetResourceId: virtualMachine.id
+  }
+}
+
 resource sqlVirtualMachine 'Microsoft.SqlVirtualMachine/sqlVirtualMachines@2023-10-01' = {
   name: vmName
   location: location

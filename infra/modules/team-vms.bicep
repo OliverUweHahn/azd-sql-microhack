@@ -92,4 +92,26 @@ resource virtualMachines 'Microsoft.Compute/virtualMachines@2024-11-01' = [
   }
 ]
 
+resource autoShutdownConfigs 'Microsoft.DevTestLab/schedules@2018-09-15' = [
+  for index in range(0, teamVmCount): {
+    name: 'shutdown-computevm-${virtualMachines[index].name}'
+    location: location
+    properties: {
+      status: 'Enabled'
+      notificationSettings: {
+        status: 'Disabled'
+        timeInMinutes: 15
+        notificationLocale: 'en'
+      }
+      dailyRecurrence: {
+        time: '1800'
+      }
+      timeZoneId: 'UTC'
+      taskType: 'ComputeVmShutdownTask'
+      targetResourceId: virtualMachines[index].id
+    }
+  }
+]
+
+
 output vmNames array = [for index in range(0, teamVmCount): virtualMachines[index].name]

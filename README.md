@@ -54,6 +54,12 @@ azd env set AZURE_LOCATION swedencentral
 azd provision
 ```
 
+## Review Environment
+
+```powershell
+azd env get-values
+```
+
 ## Cleaning Up
 
 ```powershell
