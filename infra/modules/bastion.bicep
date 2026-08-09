@@ -23,8 +23,12 @@ resource bastion 'Microsoft.Network/bastionHosts@2024-05-01' = {
   location: location
   tags: tags
 
+  // sku: {
+  //   name: 'Basic'
+  // }
+ 
   sku: {
-    name: 'Basic'
+    name: 'Standard'
   }
 
   properties: {

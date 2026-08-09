@@ -65,12 +65,18 @@ resource virtualMachines 'Microsoft.Compute/virtualMachines@2024-11-01' = [
       }
 
       storageProfile: {
+        // imageReference: {
+        //   publisher: 'MicrosoftWindowsServer'
+        //   offer: 'WindowsServer'
+        //   sku: '2022-datacenter-g2'
+        //   version: 'latest'
+        // }
         imageReference: {
-          publisher: 'MicrosoftWindowsServer'
-          offer: 'WindowsServer'
-          sku: '2022-datacenter-g2'
+          publisher: 'MicrosoftWindowsDesktop'
+          offer: 'windows-11'
+          sku: 'win11-23h2-ent'
           version: 'latest'
-        }
+        }        
 
         osDisk: {
           createOption: 'FromImage'
