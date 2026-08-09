@@ -9,7 +9,7 @@ $ErrorActionPreference = 'Stop'
 Write-Host "Configuring TEAM VM..."
 
 Write-Host "Configure Team Wallpaper..."
-& .\Configure-TeamWallpaper.ps1 -WallpaperBaseUri $WallpaperUri -TeamNumber $TeamNumber
+& .\Configure-TeamWallpaper.ps1 -WallpaperUri $WallpaperUri -TeamNumber $TeamNumber
 
 Write-Host "Installing Team Tools..."
 & .\install-team-tools.ps1
