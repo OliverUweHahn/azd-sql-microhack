@@ -31,7 +31,7 @@ try {
 
     $ssmsProcess = Start-Process `
         -FilePath $ssmsInstaller `
-        -ArgumentList '--add Microsoft.SqlServer.Workload.SSMS.AI --includeRecommended--quiet --wait --norestart' `
+        -ArgumentList '--add Microsoft.SqlServer.Workload.SSMS.AI --includeRecommended --quiet --wait --norestart' `
         -Wait `
         -PassThru
 
