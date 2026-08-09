@@ -1,7 +1,8 @@
 param location string
 param teamVmCount int
+param reproBaseURL string
 
-var ConfigureTeamVMCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-teamvm.ps1" -SamplesBaseUri "https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/TSQL_Scripts"'
+var ConfigureTeamVMCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-teamvm.ps1" -SamplesBaseUri "${reproBaseURL}/TSQL_Scripts"'
 
 resource virtualMachines 'Microsoft.Compute/virtualMachines@2024-11-01' existing = [
   for index in range(0, teamVmCount): {
@@ -23,9 +24,9 @@ resource installTeamTools 'Microsoft.Compute/virtualMachines/extensions@2024-11-
 
       settings: {
         fileUris: [
-          'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/install-team-tools.ps1'
-          'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Download-Samples.ps1'
-          'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/bootstrap-teamvm.ps1'
+          '${reproBaseURL}/scripts/install-team-tools.ps1'
+          '${reproBaseURL}/scripts/Download-Samples.ps1'
+          '${reproBaseURL}/scripts/bootstrap-teamvm.ps1'
         ]
       }
 

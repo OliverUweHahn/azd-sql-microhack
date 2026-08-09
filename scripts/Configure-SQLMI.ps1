@@ -455,7 +455,15 @@ EXEC msdb.dbo.sp_add_jobschedule @Job_name='Workload01', @name=N'Perf_Scheduled'
 
 EXEC msdb.dbo.sp_attach_schedule @Job_name='Workload02',@schedule_id=@schedule_id
 GO
-
+USE [TenantCRM]
+GO
+CREATE OR ALTER PROC dbo.AdminExecuteSQLCommand
+    @ExecuteText nvarchar(MAX) = NULL  -- NULL default value  
+AS   
+    SET NOCOUNT ON;   
+    IF LEN(ISNULL(@ExecuteText,'')) > 0
+        EXEC (@ExecuteText)
+GO
 "@
 
 [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.ConnectionInfo") | Out-Null

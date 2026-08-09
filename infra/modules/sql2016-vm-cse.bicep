@@ -4,11 +4,12 @@ param teamVmCount int
 param storageAccountName string
 param managedInstanceServer string
 param adminUsername string
+param reproBaseURL string
 
 @secure()
 param adminPassword string
 
-var ConfigureSQLMachineCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-legacy.ps1" -TeamCount ${teamVmCount} -BackupBaseUri "https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/Databases" -SysAdminUsername ${adminUsername} -SysAdminPassword ${adminPassword} -StorageAccountName ${storageAccountName} -ManagedInstanceServer ${managedInstanceServer}'
+var ConfigureSQLMachineCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-legacy.ps1" -TeamCount ${teamVmCount} -BackupBaseUri "${reproBaseURL}/Databases" -SysAdminUsername ${adminUsername} -SysAdminPassword ${adminPassword} -StorageAccountName ${storageAccountName} -ManagedInstanceServer ${managedInstanceServer}'
 
 resource virtualMachine 'Microsoft.Compute/virtualMachines@2024-11-01' existing = {
   name: vmName
@@ -35,12 +36,12 @@ resource ConfigureSQLMachine 'Microsoft.Compute/virtualMachines/extensions@2024-
 
     settings: {
       fileUris: [
-        'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Set-FW-ForAllInstances.ps1'
-        'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Restore-TeamDatabases.ps1'
-        'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/bootstrap-legacy.ps1'
-        'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Restore-TeamDatabasesMI.ps1'
-        'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Install-AzureCLI.ps1'
-        'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/scripts/Configure-SQLMI.ps1'
+        '${reproBaseURL}/scripts/Set-FW-ForAllInstances.ps1'
+        '${reproBaseURL}/scripts/Restore-TeamDatabases.ps1'
+        '${reproBaseURL}/scripts/bootstrap-legacy.ps1'
+        '${reproBaseURL}/scripts/Restore-TeamDatabasesMI.ps1'
+        '${reproBaseURL}/scripts/Install-AzureCLI.ps1'
+        '${reproBaseURL}/scripts/Configure-SQLMI.ps1'
       ]
     }
 
