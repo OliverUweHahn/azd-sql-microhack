@@ -18,7 +18,8 @@ $BaseURL = ($SamplesBaseUri -split "//")[1]
 $company = ($BaseURL -split "/")[1]
 $repo = ($BaseURL -split "/")[2]
 $branch = ($BaseURL -split "/")[3]
-$folder = ($BaseURL -split "/")[4]
+#$folder = ($BaseURL -split "/")[4]
+$folder = $BaseURL -replace "raw.githubusercontent.com/$company/$repo/$branch/", ""
 
 if (-not (Test-Path -LiteralPath $DownloadDirectory))
 {

@@ -7,7 +7,7 @@ param environmentName string
 param location string
 
 param adminUsername string
-param reproBaseURL string = 'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main'
+param reproBaseURL string = 'https://raw.githubusercontent.com/OliverUweHahn/azd-sql-microhack/main/03-Azure/01-02%20Data/02-SQL_Modernization/labautomation'
 
 @secure()
 param adminPassword string
