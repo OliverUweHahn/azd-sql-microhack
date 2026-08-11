@@ -11,6 +11,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+$logPath = 'C:\Windows\Temp\Configure-SQLMI.log'
+Start-Transcript -Path $logPath -Append
+
 Write-Host 'Configuring SQL Managed Instance...'
 
 $ConfigureSql = @"
@@ -509,3 +512,4 @@ try {
 catch {
 }
 
+Stop-Transcript

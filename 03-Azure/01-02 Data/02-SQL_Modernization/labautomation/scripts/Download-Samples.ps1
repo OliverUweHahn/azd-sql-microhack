@@ -13,6 +13,9 @@ param
     [switch] $ForceDownload
 )
 
+$logPath = 'C:\Windows\Temp\Download-Samples.log'
+Start-Transcript -Path $logPath -Append
+
 $BaseURL = ($SamplesBaseUri -split "//")[1]
 
 $company = ($BaseURL -split "/")[1]
@@ -49,3 +52,5 @@ foreach ($item in $items) {
         }
     }
 }
+
+Stop-Transcript

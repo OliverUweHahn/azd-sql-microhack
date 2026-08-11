@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
-$logPath = 'C:\Windows\Temp\microhack-team-tools.log'
+$logPath = 'C:\Windows\Temp\install-team-tools.log'
 
 Start-Transcript -Path $logPath -Append
 

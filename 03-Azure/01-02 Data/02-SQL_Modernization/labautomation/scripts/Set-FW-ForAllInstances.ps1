@@ -1,3 +1,6 @@
+$logPath = 'C:\Windows\Temp\Set-FW-ForAllInstances.log'
+Start-Transcript -Path $logPath -Append
+
 $Instances = @()
 $BrowserService = Get-WmiObject -Class Win32_service | Where-Object { $_.Name -eq "SQLBrowser" }
 if ($BrowserService) {
@@ -45,3 +48,4 @@ foreach ($Instance in $Instances) {
     }
 }
 
+Stop-Transcript

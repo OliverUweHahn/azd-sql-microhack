@@ -71,6 +71,9 @@ param
     [switch] $ForceDownload
 )
 
+$logPath = 'C:\Windows\Temp\Restore-TeamDatabases.log'
+Start-Transcript -Path $logPath -Append
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
@@ -720,3 +723,5 @@ Write-Host ""
 Write-Host (
     "Completed. {0} team database set(s) were processed." -f $TeamCount
 ) -ForegroundColor Green
+
+Stop-Transcript

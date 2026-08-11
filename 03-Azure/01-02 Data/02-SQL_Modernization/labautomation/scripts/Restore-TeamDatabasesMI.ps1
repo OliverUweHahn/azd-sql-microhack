@@ -18,6 +18,10 @@ param(
     [string]$ContainerName = 'backups'
 )
 
+
+$logPath = 'C:\Windows\Temp\Restore-TeamDatabasesMI.log'
+Start-Transcript -Path $logPath -Append
+
 $ErrorActionPreference = 'Stop'
 
 Write-Host 'Checking Storage RBAC propagation...'
@@ -193,3 +197,5 @@ END
 }
 
 Write-Host 'All databases processed.'
+
+Stop-Transcript

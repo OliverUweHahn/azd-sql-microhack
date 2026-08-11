@@ -58,6 +58,9 @@ param
     [switch] $ForceDownload
 )
 
+$logPath = 'C:\Windows\Temp\Restore-SampleDatabases.log'
+Start-Transcript -Path $logPath -Append
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
@@ -648,3 +651,5 @@ Restore-SampleDatabase `
 
 Write-Host ""
 Write-Host "Completed." -ForegroundColor Green
+
+Stop-Transcript

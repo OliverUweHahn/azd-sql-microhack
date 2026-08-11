@@ -8,6 +8,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+$logPath = 'C:\Windows\Temp\Configure-legacySQL.log'
+Start-Transcript -Path $logPath -Append
+
 Write-Host 'Configuring SQL legacy Instance...'
 
 $ConfigureSql = @"
@@ -16,6 +19,16 @@ GO
 EXEC sp_configure 'CLR Enabled', 1
 RECONFIGURE WITH OVERRIDE
 GO
+
+DECLARE @DefaultLogPath NVARCHAR(500)
+
+SELECT 
+    @DefaultLogPath = LEFT(physical_name, LEN(physical_name) - CHARINDEX('\', REVERSE(physical_name)) + 1) 
+FROM 
+    sys.master_files
+WHERE 
+    database_id = DB_ID('TEAM01_TenantDataDB')
+    AND file_id = 2;
 
 DECLARE @DBName VARCHAR(255)
 DECLARE @SQLCmd NVARCHAR(MAX)
@@ -33,7 +46,7 @@ BEGIN
 	EXEC (@SQLCmd)
 
 	SET @SQLCmd = 'ALTER DATABASE [' + @DBName + ']
-	ADD FILE (NAME = N''' + @DBName + '_Log2''', FILENAME = N''' + @DBName + '_Log2.ldf'');
+	ADD FILE (NAME = N''' + @DBName + '_Log2'', FILENAME = N''' + @DefaultLogPath + @DBName + '_Log2.ldf'');
 	'
 	--PRINT @SQLCmd
 	EXEC (@SQLCmd)
@@ -106,6 +119,7 @@ Try {
     Restart-Service -Name "MSSQLSERVER" -Force
 }
 Catch {
-    Write-Error "Error configuring SQL legacy Instance: $_"
+    Write-Host "Error configuring SQL legacy Instance: $_"
 }
 
+Stop-Transcript
