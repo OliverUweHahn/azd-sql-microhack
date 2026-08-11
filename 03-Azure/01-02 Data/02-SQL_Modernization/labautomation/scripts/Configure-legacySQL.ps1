@@ -46,7 +46,7 @@ BEGIN
 	EXEC (@SQLCmd)
 
 	SET @SQLCmd = 'ALTER DATABASE [' + @DBName + ']
-	ADD FILE (NAME = N''' + @DBName + '_Log2'', FILENAME = N''' + @DefaultLogPath + @DBName + '_Log2.ldf'');
+	ADD LOG FILE (NAME = N''' + @DBName + '_Log2'', FILENAME = N''' + @DefaultLogPath + @DBName + '_Log2.ldf'');
 	'
 	--PRINT @SQLCmd
 	EXEC (@SQLCmd)
@@ -56,13 +56,13 @@ END
 CLOSE DB_Crs
 DEALLOCATE DB_Crs
 GO
-EXEC xp_instance_regwrite 
-    @rootkey = N'HKEY_LOCAL_MACHINE', 
-    @key = N'SOFTWARE\Microsoft\Microsoft SQL Server\MSSQLServer\AlwaysOn', 
-    @value_name = N'HadrEnabled', 
-    @type = N'REG_DWORD', 
-    @value = 1;
-GO
+--EXEC xp_instance_regwrite 
+--    @rootkey = N'HKEY_LOCAL_MACHINE', 
+--    @key = N'SOFTWARE\Microsoft\Microsoft SQL Server\MSSQLServer\HADR', 
+--    @value_name = N'Hadr_Enabled', 
+--    @type = N'REG_DWORD', 
+--    @value = 1;
+--GO
 USE [master]
 GO
 CREATE MASTER KEY ENCRYPTION BY PASSWORD = '$sqlpassword'
@@ -116,6 +116,7 @@ Try {
     Write-Host "Installing and configuring Windows Failover Cluster..." -ForegroundColor Green
     Install-WindowsFeature -Name Failover-Clustering -IncludeManagementTools -IncludeAllSubFeature
     $clus = New-Cluster -Name "CLU01" -AdministrativeAccessPoint None -Verbose -Force
+    Enable-SqlAlwaysOn -Path SQLSERVER:\SQL\legacysql2016\default -Force    
     Restart-Service -Name "MSSQLSERVER" -Force
 }
 Catch {
