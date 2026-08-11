@@ -1,8 +1,5 @@
 param(
     [Parameter(Mandatory)]
-    [string]$ManagedInstanceServer,
-
-    [Parameter(Mandatory)]
     [string] $sqlusername,
 
     [Parameter(Mandatory)]
@@ -11,7 +8,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-Write-Host 'Configuring SQL Managed Instance...'
+Write-Host 'Configuring SQL legacy Instance...'
 
 $ConfigureSql = @"
 USE master
@@ -34,17 +31,35 @@ BEGIN
 	'
 	--PRINT @SQLCmd
 	EXEC (@SQLCmd)
+
+	SET @SQLCmd = 'ALTER DATABASE [' + @DBName + ']
+	ADD FILE (NAME = N''' + @DBName + '_Log2''', FILENAME = N''' + @DBName + '_Log2.ldf'');
+	'
+	--PRINT @SQLCmd
+	EXEC (@SQLCmd)
+
 	FETCH NEXT FROM DB_Crs INTO @DBName
 END
 CLOSE DB_Crs
 DEALLOCATE DB_Crs
+GO
+EXEC xp_instance_regwrite 
+    @rootkey = N'HKEY_LOCAL_MACHINE', 
+    @key = N'SOFTWARE\Microsoft\Microsoft SQL Server\MSSQLServer\AlwaysOn', 
+    @value_name = N'HadrEnabled', 
+    @type = N'REG_DWORD', 
+    @value = 1;
+GO
+USE [master]
+GO
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '$sqlpassword'
 GO
 "@
 
 [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.ConnectionInfo") | Out-Null
 [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.Smo") | Out-Null
 
-$connectionString = "Data Source=$ManagedInstanceServer;Initial Catalog=master;TrustServerCertificate=True;"
+$connectionString = "Data Source=.;Initial Catalog=master;TrustServerCertificate=True;"
 $Connection = New-Object System.Data.SqlClient.SqlConnection($connectionString)
 [System.Security.SecureString]$SQLPwd = $sqlpassword | ConvertTo-SecureString -AsPlainText -Force
 $SQLPwd.MakeReadOnly()
@@ -82,5 +97,15 @@ try {
 	$Connection.Close()
 }
 catch {
+}
+
+Try {
+    Write-Host "Installing and configuring Windows Failover Cluster..." -ForegroundColor Green
+    Install-WindowsFeature -Name Failover-Clustering -IncludeManagementTools -IncludeAllSubFeature
+    $clus = New-Cluster -Name "CLU01" -AdministrativeAccessPoint None -Verbose -Force
+    Restart-Service -Name "MSSQLSERVER" -Force
+}
+Catch {
+    Write-Error "Error configuring SQL legacy Instance: $_"
 }
 

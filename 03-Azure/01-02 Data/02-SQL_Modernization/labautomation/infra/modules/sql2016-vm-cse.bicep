@@ -42,6 +42,7 @@ resource ConfigureSQLMachine 'Microsoft.Compute/virtualMachines/extensions@2024-
         '${reproBaseURL}/scripts/Restore-TeamDatabasesMI.ps1'
         '${reproBaseURL}/scripts/Install-AzureCLI.ps1'
         '${reproBaseURL}/scripts/Configure-SQLMI.ps1'
+        '${reproBaseURL}/scripts/Configure-legacySQL.ps1'
       ]
     }
 

@@ -32,6 +32,11 @@ resource bastion 'Microsoft.Network/bastionHosts@2024-05-01' = {
   }
 
   properties: {
+    // Enables Native Client connections (SSH/RDP via Azure CLI)
+    enableTunneling: true 
+    // Enables the creation of browser-accessible Shareable Links
+    enableShareableLink: true 
+    
     ipConfigurations: [
       {
         name: 'bastion-ip-config'
