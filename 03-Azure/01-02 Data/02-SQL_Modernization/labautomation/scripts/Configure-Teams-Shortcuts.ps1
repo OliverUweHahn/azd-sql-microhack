@@ -13,7 +13,7 @@ if (-not (Test-Path -LiteralPath "C:\MicroHack"))
         Out-Null
 }
 
-$EnvironmentInfoPath = Join-Path $DownloadDirectory "EnvironmentInfo.txt"
+$EnvironmentInfoPath = Join-Path "C:\MicroHack" "EnvironmentInfo.txt"
 
 if (Test-Path $EnvironmentInfoPath) {
     Remove-Item -LiteralPath $EnvironmentInfoPath -ErrorAction SilentlyContinue -Force
