@@ -1,7 +1,8 @@
 param(
     [string]$SamplesBaseUri,
     #[string]$WallpaperUri,  
-    [int]$TeamNumber
+    [int]$TeamNumber,
+    [string]$ManagedInstanceServer
 )
 
 $ErrorActionPreference = 'Stop'
@@ -18,5 +19,9 @@ Write-Host "Installing Team Tools..."
 Write-Host "Downloading Sample Files..."
 
 & .\Download-Samples.ps1 -SamplesBaseUri $SamplesBaseUri -ForceDownload
+
+Write-Host "Configuring Teams Shortcuts..."
+
+& .\Configure-Teams-Shortcuts.ps1 -ManagedInstanceServer $ManagedInstanceServer
 
 Write-Host "Bootstrap completed."

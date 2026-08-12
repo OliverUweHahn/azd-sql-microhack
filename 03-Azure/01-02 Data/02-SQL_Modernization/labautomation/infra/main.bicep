@@ -217,11 +217,13 @@ module teamVms_cse 'modules/team-vms-cse.bicep' = {
   scope: resourceGroup
   dependsOn: [
     teamVms
+    managedInstance    
   ]
   params: {
     location: location
     teamVmCount: teamVmCount
     reproBaseURL: reproBaseURL
+    managedInstanceServer: managedInstance.outputs.fullyQualifiedDomainName
   }
 }
 
