@@ -5,7 +5,7 @@ param managedInstanceServer string
 param storageAccountName string
 
 //var ConfigureTeamVMCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-teamvm.ps1" -SamplesBaseUri "${reproBaseURL}/TSQL_Scripts" -WallpaperUri "${reproBaseURL}/assets/BaseWallpaper.jpg" -TeamNumber ##teamNumber##'
-var ConfigureTeamVMCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-teamvm.ps1" -SamplesBaseUri "${reproBaseURL}/TSQL_Scripts" -LabsBaseUri "${reproBaseURL}/Labs" -ManagedInstanceServer "${managedInstanceServer}" -StorageAccountName "${storageAccountName}"'
+var ConfigureTeamVMCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-teamvm.ps1" -SamplesBaseUri "${reproBaseURL}/TSQL_Scripts" -LabsBaseUri "${reproBaseURL}/LABS" -ManagedInstanceServer "${managedInstanceServer}" -StorageAccountName "${storageAccountName}"'
 resource virtualMachines 'Microsoft.Compute/virtualMachines@2024-11-01' existing = [
   for index in range(0, teamVmCount): {
     name: 'vm-TEAM${padLeft(string(index + 1), 2, '0')}'
