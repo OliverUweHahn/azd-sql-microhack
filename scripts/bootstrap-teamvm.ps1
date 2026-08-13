@@ -24,7 +24,7 @@ Write-Host "Downloading Sample Files..."
 
 Write-Host "Downloading LAB Files..."
 
-& .\Download-Labs.ps1 -SamplesBaseUri $LabsBaseUri -ForceDownload
+& .\Download-Labs.ps1 -LabsBaseUri $LabsBaseUri -ForceDownload
 
 Write-Host "Configuring Teams Shortcuts..."
 
