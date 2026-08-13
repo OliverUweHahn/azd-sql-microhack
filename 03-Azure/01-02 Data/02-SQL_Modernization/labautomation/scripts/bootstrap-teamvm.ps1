@@ -3,7 +3,8 @@ param(
     [string]$LabsBaseUri,
     #[string]$WallpaperUri,  
     [int]$TeamNumber,
-    [string]$ManagedInstanceServer
+    [string]$ManagedInstanceServer,
+    [string]$StorageAccountName
 )
 
 $ErrorActionPreference = 'Stop'
@@ -27,6 +28,6 @@ Write-Host "Downloading LAB Files..."
 
 Write-Host "Configuring Teams Shortcuts..."
 
-& .\Configure-Teams-Shortcuts.ps1 -ManagedInstanceServer $ManagedInstanceServer
+& .\Configure-Teams-Shortcuts.ps1 -ManagedInstanceServer $ManagedInstanceServer -StorageAccountName $StorageAccountName
 
 Write-Host "Bootstrap completed."

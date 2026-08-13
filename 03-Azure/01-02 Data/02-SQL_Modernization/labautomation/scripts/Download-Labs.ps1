@@ -3,7 +3,7 @@ param
 (
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
-    [string] $SamplesBaseUri,
+    [string] $LabsBaseUri,
 
     [Parameter(Mandatory = $false)]
     [ValidateNotNullOrEmpty()]
@@ -21,11 +21,12 @@ try
     #
     # Parse GitHub URL
     #
-    $BaseURL = $SamplesBaseUri
+    $BaseURL = ($LabsBaseUri -split "//")[1]
+    Write-Host "Base URL: $BaseURL"
 
-    $company = ($BaseURL -split "/")[0]
-    $repo    = ($BaseURL -split "/")[1]
-    $branch  = ($BaseURL -split "/")[2]
+    $company = ($BaseURL -split "/")[1]
+    $repo    = ($BaseURL -split "/")[2]
+    $branch  = ($BaseURL -split "/")[3]
 
     $folder = $BaseURL -replace "raw.githubusercontent.com/$company/$repo/$branch/", ""
 
@@ -49,17 +50,18 @@ try
     function Get-GitHubFolderContent
     {
         param (
-            [Parameter(Mandatory)]
+            [AllowEmptyString()]
             [string] $RepoFolder,
 
             [Parameter(Mandatory)]
             [string] $LocalFolder
         )
 
-        $apiUrl = "https://api.github.com/repos/$company/$repo/contents/$RepoFolder?ref=$branch"
+        $apiUrl = "https://api.github.com/repos/$company/$repo/contents/$($RepoFolder)?ref=$branch"
 
         Write-Host ""
         Write-Host "Reading folder: $RepoFolder"
+	Write-Host $apiUrl
 
         try
         {

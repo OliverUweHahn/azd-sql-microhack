@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param
 (
-    [string] $ManagedInstanceServer
+    [string] $ManagedInstanceServer,
+    [string] $StorageAccountName
 )
 
 if (-not (Test-Path -LiteralPath "C:\MicroHack"))
@@ -28,6 +29,8 @@ if (Test-Path $EnvironmentInfoPath) {
 "SQL MI (Auth):        SQL Authentication" | Out-File -FilePath $EnvironmentInfoPath -Encoding utf8 -Force -Append
 "SQL MI (Username):    DemoUser" | Out-File -FilePath $EnvironmentInfoPath -Encoding utf8 -Force -Append
 "SQL MI (Password):    Demo@pass1234567" | Out-File -FilePath $EnvironmentInfoPath -Encoding utf8 -Force -Append
+"" | Out-File -FilePath $EnvironmentInfoPath -Encoding utf8 -Force -Append
+"Storage Account:      $StorageAccountName" | Out-File -FilePath $EnvironmentInfoPath -Encoding utf8 -Force -Append
 
 $TargetFile = $EnvironmentInfoPath
 $ShortcutPath = "$env:Public\Desktop\Readme.lnk"

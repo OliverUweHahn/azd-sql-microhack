@@ -224,6 +224,7 @@ module teamVms_cse 'modules/team-vms-cse.bicep' = {
     teamVmCount: teamVmCount
     reproBaseURL: reproBaseURL
     managedInstanceServer: managedInstance.outputs.fullyQualifiedDomainName
+    storageAccountName: storage.outputs.storageAccountName
   }
 }
 
