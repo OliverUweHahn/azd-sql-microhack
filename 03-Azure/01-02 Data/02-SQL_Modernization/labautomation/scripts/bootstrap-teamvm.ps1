@@ -1,5 +1,6 @@
 param(
     [string]$SamplesBaseUri,
+    [string]$LabsBaseUri,
     #[string]$WallpaperUri,  
     [int]$TeamNumber,
     [string]$ManagedInstanceServer
@@ -19,6 +20,10 @@ Write-Host "Installing Team Tools..."
 Write-Host "Downloading Sample Files..."
 
 & .\Download-Samples.ps1 -SamplesBaseUri $SamplesBaseUri -ForceDownload
+
+Write-Host "Downloading LAB Files..."
+
+& .\Download-Labs.ps1 -SamplesBaseUri $LabsBaseUri -ForceDownload
 
 Write-Host "Configuring Teams Shortcuts..."
 

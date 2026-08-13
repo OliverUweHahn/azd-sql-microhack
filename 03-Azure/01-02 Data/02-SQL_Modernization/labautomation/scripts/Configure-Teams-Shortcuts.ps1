@@ -13,18 +13,24 @@ if (-not (Test-Path -LiteralPath "C:\MicroHack"))
         Out-Null
 }
 
-$EnvironmentInfoPath = Join-Path "C:\MicroHack" "EnvironmentInfo.txt"
+$EnvironmentInfoPath = Join-Path "C:\MicroHack" "Readme.txt"
 
 if (Test-Path $EnvironmentInfoPath) {
     Remove-Item -LiteralPath $EnvironmentInfoPath -ErrorAction SilentlyContinue -Force
 }
 
 "Your Hack-Environment" | Out-File -FilePath $EnvironmentInfoPath -Encoding utf8 -Force
+"---------------------------------------------------------------------------" | Out-File -FilePath $EnvironmentInfoPath -Encoding utf8 -Force -Append
+"SQL Server 2016:      legacysql2016" | Out-File -FilePath $EnvironmentInfoPath -Encoding utf8 -Force -Append
+"SQL Server (Auth):    Windows Authentication" | Out-File -FilePath $EnvironmentInfoPath -Encoding utf8 -Force -Append
 "" | Out-File -FilePath $EnvironmentInfoPath -Encoding utf8 -Force -Append
 "SQL Managed Instance: $ManagedInstanceServer" | Out-File -FilePath $EnvironmentInfoPath -Encoding utf8 -Force -Append
+"SQL MI (Auth):        SQL Authentication" | Out-File -FilePath $EnvironmentInfoPath -Encoding utf8 -Force -Append
+"SQL MI (Username):    DemoUser" | Out-File -FilePath $EnvironmentInfoPath -Encoding utf8 -Force -Append
+"SQL MI (Password):    Demo@pass1234567" | Out-File -FilePath $EnvironmentInfoPath -Encoding utf8 -Force -Append
 
 $TargetFile = $EnvironmentInfoPath
-$ShortcutPath = "$env:Public\Desktop\EnvironmentInfo.lnk"
+$ShortcutPath = "$env:Public\Desktop\Readme.lnk"
 
 $WshShell = New-Object -ComObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut($ShortcutPath)

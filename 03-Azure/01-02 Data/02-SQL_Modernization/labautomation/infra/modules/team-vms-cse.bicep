@@ -4,7 +4,7 @@ param reproBaseURL string
 param managedInstanceServer string
 
 //var ConfigureTeamVMCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-teamvm.ps1" -SamplesBaseUri "${reproBaseURL}/TSQL_Scripts" -WallpaperUri "${reproBaseURL}/assets/BaseWallpaper.jpg" -TeamNumber ##teamNumber##'
-var ConfigureTeamVMCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-teamvm.ps1" -SamplesBaseUri "${reproBaseURL}/TSQL_Scripts" -ManagedInstanceServer "${managedInstanceServer}"'
+var ConfigureTeamVMCommand = 'powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "bootstrap-teamvm.ps1" -SamplesBaseUri "${reproBaseURL}/TSQL_Scripts" -LabsBaseUri "${reproBaseURL}/Labs" -ManagedInstanceServer "${managedInstanceServer}"'
 
 resource virtualMachines 'Microsoft.Compute/virtualMachines@2024-11-01' existing = [
   for index in range(0, teamVmCount): {
@@ -31,6 +31,7 @@ resource installTeamTools 'Microsoft.Compute/virtualMachines/extensions@2024-11-
           '${reproBaseURL}/scripts/Download-Samples.ps1'
           '${reproBaseURL}/scripts/bootstrap-teamvm.ps1'
           '${reproBaseURL}/scripts/Configure-Teams-Shortcuts.ps1'
+          '${reproBaseURL}/scripts/Download-Labs.ps1'
           //'${reproBaseURL}/scripts/Configure-TeamWallpaper.ps1'
         ]
       }
