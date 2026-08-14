@@ -50,3 +50,12 @@ if (Test-Path $Target) {
     $Link.IconLocation = "$Target,0"
     $Link.Save()
 }
+
+$Target = "C:\MicroHack\Labs"
+if (Test-Path $Target) {
+    $Shell = New-Object -ComObject WScript.Shell
+    $Link = $Shell.CreateShortcut("$env:Public\Desktop\Labs.lnk")
+    $Link.TargetPath = $Target
+    $Link.IconLocation = "$Target,0"
+    $Link.Save()
+}
